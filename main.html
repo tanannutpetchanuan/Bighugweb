@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Big Hug 🤗 — พื้นที่ปลอดภัยสำหรับหัวใจ</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg1:#fff5f0; --bg2:#fff0f5; --bg3:#f0f8ff;
+  --card:rgba(255,255,255,0.92);
+  --text:#3d2828; --sub:#8a6a6a;
+  --accent:#ff7b7b; --accent2:#6ec6ca; --accent3:#ffb347;
+  --shadow:0 8px 32px rgba(255,123,123,0.14);
+  --border:rgba(255,123,123,0.18);
+  --input:rgba(255,255,255,0.97);
+  --radius:20px;
+}
+[data-dark] {
+  --bg1:#12101f; --bg2:#0d1626; --bg3:#0a1225;
+  --card:rgba(22,32,60,0.95);
+  --text:#f0e8ff; --sub:#8090b8;
+  --accent:#e05c8a; --accent2:#4ecdc4; --accent3:#ffd700;
+  --shadow:0 8px 32px rgba(224,92,138,0.22);
+  --border:rgba(224,92,138,0.22);
+  --input:rgba(12,22,48,0.92);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Kanit',sans-serif;
+  min-height:100vh;
+  background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 50%,var(--bg3) 100%);
+  color:var(--text);
+  transition:background .5s,color .4s;
+  overflow-x:hidden;
+}
+.particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;overflow:hidden;}
+.particle{position:absolute;animation:floatUp linear infinite;opacity:.13;}
+@keyframes floatUp{from{transform:translateY(110vh) rotate(0);opacity:.13;}to{transform:translateY(-60px) rotate(360deg);opacity:0;}}
+
+.screen{display:none;min-height:100vh;position:relative;z-index:1;align-items:center;justify-content:center;padding:80px 20px 40px;flex-direction:column;}
+.screen.active{display:flex;}
+
+/* Theme btn */
+.theme-btn{
+  position:fixed;top:18px;right:18px;z-index:200;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:30px;padding:9px 18px;cursor:pointer;
+  font-size:13px;color:var(--sub);display:flex;align-items:center;gap:7px;
+  box-shadow:var(--shadow);transition:all .3s;font-family:'Kanit',sans-serif;
+  backdrop-filter:blur(8px);
+}
+.theme-btn:hover{transform:scale(1.05);}
+
+/* Notification */
+.notif{
+  position:fixed;top:18px;left:50%;transform:translateX(-50%) translateY(-120px);
+  background:linear-gradient(135deg,var(--accent2),#38b0aa);
+  color:#fff;border-radius:18px;padding:14px 24px;
+  display:flex;align-items:center;gap:12px;z-index:300;
+  transition:transform .45s cubic-bezier(.16,1,.3,1);cursor:pointer;
+  box-shadow:0 8px 30px rgba(78,205,196,.4);min-width:280px;max-width:340px;
+  font-size:14px;
+}
+.notif.show{transform:translateX(-50%) translateY(0);}
+
+/* Card */
+.card{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  padding:40px;width:100%;max-width:460px;
+  animation:slideUp .6s cubic-bezier(.16,1,.3,1);
+  backdrop-filter:blur(12px);
+}
+.paper{
+  background:var(--card);border-radius:var(--radius);
+  box-shadow:var(--shadow);border:1px solid var(--border);
+  padding:34px;width:100%;max-width:500px;
+  animation:slideUp .5s cubic-bezier(.16,1,.3,1);
+  backdrop-filter:blur(12px);
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(28px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+@keyframes popIn{from{opacity:0;transform:scale(.5) rotate(-8deg);}60%{transform:scale(1.08) rotate(4deg);}to{opacity:1;transform:scale(1) rotate(0);}}
+@keyframes pulse2{0%,100%{transform:scale(1);}50%{transform:scale(1.07);}}
+@keyframes breathe{0%,100%{box-shadow:0 12px 40px rgba(255,123,123,.4);}50%{box-shadow:0 18px 55px rgba(255,123,123,.65);transform:scale(1.04);}}
+@keyframes blink2{0%,100%{opacity:1;}50%{opacity:.25;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* Logo */
+.logo{text-align:center;margin-bottom:26px;}
+.logo-icon{font-size:56px;display:block;animation:pulse2 2.2s ease-in-out infinite;}
+.logo-title{font-size:30px;font-weight:700;color:var(--accent);margin-top:6px;}
+.logo-sub{font-size:13px;color:var(--sub);font-weight:300;}
+
+/* Form */
+.form-group{margin-bottom:16px;}
+.form-label{font-size:13px;font-weight:500;color:var(--sub);margin-bottom:7px;display:block;}
+.form-input{
+  width:100%;background:var(--input);border:1.5px solid var(--border);
+  border-radius:13px;padding:13px 16px;font-size:15px;color:var(--text);
+  font-family:'Kanit',sans-serif;transition:border-color .3s,box-shadow .3s;outline:none;
+}
+.form-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(255,123,123,.12);}
+.form-input::placeholder{color:var(--sub);opacity:.45;}
+textarea.form-input{min-height:170px;resize:vertical;line-height:1.75;}
+
+/* Buttons */
+.btn{
+  display:block;width:100%;background:linear-gradient(135deg,var(--accent),#ff9f80);
+  color:#fff;border:none;border-radius:14px;padding:15px;
+  font-size:16px;font-weight:600;font-family:'Kanit',sans-serif;
+  cursor:pointer;transition:transform .2s,box-shadow .2s;margin-top:8px;
+  text-align:center;
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,123,123,.38);}
+.btn:active{transform:translateY(0);}
+.btn.teal{background:linear-gradient(135deg,var(--accent2),#38ada9);}
+.btn.teal:hover{box-shadow:0 10px 28px rgba(110,198,202,.38);}
+.btn.outline{background:transparent;border:1.5px solid var(--border);color:var(--sub);font-size:14px;padding:11px 20px;}
+.btn.outline:hover{border-color:var(--accent);color:var(--accent);transform:none;box-shadow:none;}
+
+/* NEW button */
+.new-btn-wrap{text-align:center;}
+.new-btn{
+  width:148px;height:148px;border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),#ff9f80);
+  border:none;cursor:pointer;
+  display:inline-flex;flex-direction:column;align-items:center;justify-content:center;
+  box-shadow:0 12px 40px rgba(255,123,123,.42);
+  transition:transform .3s;animation:breathe 3s ease-in-out infinite;
+  font-family:'Kanit',sans-serif;
+}
+.new-btn:hover{transform:scale(1.1) !important;animation:none;}
+.new-btn-plus{font-size:44px;color:#fff;font-weight:200;line-height:1;margin-bottom:2px;}
+.new-btn-text{font-size:17px;font-weight:700;color:#fff;}
+.new-btn-label{color:var(--sub);font-size:14px;margin-top:14px;}
+
+/* Entry list */
+.entries-wrap{width:100%;max-width:500px;margin-top:28px;}
+.entry-card{
+  background:var(--card);border-radius:15px;padding:18px 20px;margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;
+  box-shadow:var(--shadow);border:1px solid var(--border);cursor:pointer;
+  transition:transform .2s;animation:fadeIn .4s ease;
+}
+.entry-card:hover{transform:translateX(5px);}
+.entry-info h3{font-size:15px;font-weight:600;}
+.entry-info p{font-size:12px;color:var(--sub);margin-top:2px;}
+.badge{
+  background:var(--accent);color:#fff;font-size:11px;
+  border-radius:20px;padding:5px 13px;font-weight:500;white-space:nowrap;
+}
+.badge.green{background:var(--accent2);}
+.badge.grey{background:var(--sub);}
+.badge.anim{animation:blink2 1.3s infinite;}
+
+/* Reply box */
+.reply-box{
+  background:linear-gradient(135deg,rgba(255,123,123,.07),rgba(78,205,196,.07));
+  border:1px solid var(--border);border-radius:15px;padding:22px;
+  line-height:1.9;font-size:15px;white-space:pre-wrap;margin-bottom:22px;
+}
+
+/* Powered */
+.powered{text-align:center;margin-top:22px;font-size:12px;color:var(--sub);opacity:.6;}
+.powered strong{color:var(--accent);}
+
+/* Top nav */
+.topnav{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+
+/* Center text */
+.center{text-align:center;}
+
+/* Divider */
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+@media(max-width:480px){
+  .card{padding:28px 22px;}
+  .paper{padding:26px 18px;}
+  .new-btn{width:130px;height:130px;}
+}
+</style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<button class="theme-btn" onclick="toggleTheme()">
+  <span id="th-icon">🌙</span><span id="th-txt">Dark</span>
+</button>
+
+<div class="notif" id="notif" onclick="openReplyFromNotif()">
+  <span style="font-size:26px">💌</span>
+  <div>
+    <div style="font-weight:600;font-size:15px;">ทีมส่งข้อความถึงคุณแล้ว!</div>
+    <div style="font-size:12px;opacity:.85;margin-top:2px;">กดเพื่ออ่านคำตอบกลับ</div>
+  </div>
+</div>
+
+<!-- ===== VERIFY ===== -->
+<div class="screen active" id="s-verify">
+  <div class="card">
+    <div class="logo">
+      <span class="logo-icon">🤗</span>
+      <div class="logo-title">Big Hug</div>
+      <div class="logo-sub">พื้นที่ปลอดภัยสำหรับหัวใจของคุณ</div>
+    </div>
+
+    <div class="center" style="margin-bottom:22px;">
+      <div style="font-size:16px;font-weight:600;">ยืนยันตัวตน</div>
+      <div style="font-size:13px;color:var(--sub);margin-top:4px;">กรอกข้อมูลเพื่อรับ Big Hug ที่อบอุ่นที่สุด 💙</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">💬 ชื่อเล่น</label>
+      <input class="form-input" id="v-nick" type="text" placeholder="เรียกคุณว่าอะไรดีนะ...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">🎂 อายุ</label>
+      <input class="form-input" id="v-age" type="number" placeholder="อายุของคุณ..." min="1" max="120">
+    </div>
+    <div class="form-group">
+      <label class="form-label">📧 อีเมล</label>
+      <input class="form-input" id="v-email" type="email" placeholder="อีเมลของคุณ...">
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="btn" onclick="doVerify()">🤗 ยอมรับเพื่อรับ Big Hug ที่ดีที่สุด</button>
+
+    <div class="powered">
+      Powered : <strong>ทีมปราบปรามความทุกข์</strong> &nbsp;•&nbsp; Big Hug 🤗
+    </div>
+  </div>
+</div>
+
+<!-- ===== WELCOME ===== -->
+<div class="screen" id="s-welcome">
+  <div class="card center">
+    <div style="font-size:78px;animation:popIn .8s ease both;">🥰</div>
+    <h2 style="font-size:22px;font-weight:700;margin:16px 0 10px;">
+      ยินดีต้อนรับนะ <span id="wname" style="color:var(--accent)"></span> 💙
+    </h2>
+    <p style="font-size:15px;line-height:1.9;color:var(--sub);">
+      ระบายความในใจมาทั้งหมดนะครับ<br>
+      เราจะเป็นคนให้ความสำคัญคุณ<br>
+      คุณไม่ได้อยู่คนเดียว ✨
+    </p>
+    <button class="btn teal" style="margin-top:26px;" onclick="go('main')">เริ่มต้นเลย →</button>
+  </div>
+</div>
+
+<!-- ===== MAIN ===== -->
+<div class="screen" id="s-main">
+  <div style="width:100%;max-width:500px;">
+    <div class="center" style="margin-bottom:36px;">
+      <h1 style="font-size:22px;font-weight:600;">
+        สวัสดี <span id="mname" style="color:var(--accent)"></span> 🌟
+      </h1>
+      <p style="font-size:14px;color:var(--sub);margin-top:4px;">มีอะไรอยากระบายไหม?</p>
+    </div>
+
+    <div class="new-btn-wrap">
+      <button class="new-btn" onclick="go('new')">
+        <div class="new-btn-plus">+</div>
+        <div class="new-btn-text">NEW</div>
+      </button>
+      <p class="new-btn-label">🤍 กดเพื่อระบายความทุกข์ของตัวเอง</p>
+    </div>
+
+    <div class="entries-wrap" id="elist"></div>
+  </div>
+</div>
+
+<!-- ===== NEW ENTRY ===== -->
+<div class="screen" id="s-new">
+  <div class="paper">
+    <div class="topnav">
+      <button class="btn outline" style="width:auto;margin:0;" onclick="go('main')">← กลับ</button>
+      <span style="font-size:13px;color:var(--sub);">📝 บันทึกใหม่</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">ชื่อเล่น (ใส่หรือเว้นก็ได้นะ)</label>
+      <input class="form-input" id="e-nick" placeholder="ชื่อเล่นของคุณ...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">💭 ระบายมาเลยนะ ที่นี่ปลอดภัยเสมอ...</label>
+      <textarea class="form-input" id="e-content" placeholder="เขียนทุกอย่างที่อยากพูด ไม่ว่าจะเศร้า กังวล หรือแค่อยากระบาย... เราอยู่ตรงนี้เสมอ 🤗"></textarea>
+    </div>
+
+    <button class="btn" onclick="submitEntry()">📮 ส่งให้ทีมปราบปรามความทุกข์</button>
+  </div>
+</div>
+
+<!-- ===== SENT ===== -->
+<div class="screen" id="s-sent">
+  <div class="card center">
+    <div style="font-size:72px;animation:popIn .7s ease;">📬</div>
+    <h2 style="font-size:22px;font-weight:700;margin:16px 0 10px;color:var(--accent2);">
+      ส่งข้อมูลเสร็จสิ้น
+    </h2>
+    <p style="font-size:15px;line-height:1.9;color:var(--sub);">
+      เราจะรับคำนี้มาเพื่อ<br>
+      <strong style="color:var(--accent)">Big Hug ที่ดีที่สุด</strong> 🤗<br>
+      รอรับกำลังใจจากเราด้วยนะ 💙
+    </p>
+    <button class="btn teal" style="margin-top:24px;" onclick="go('main')">กลับหน้าหลัก</button>
+    <div style="margin-top:14px;">
+      
+
+<!-- ===== REPLY ===== -->
+<div class="screen" id="s-reply">
+  <div class="paper">
+    <div class="center" style="margin-bottom:24px;">
+      <div style="font-size:50px;animation:popIn .6s ease;">💌</div>
+      <h2 style="font-size:18px;font-weight:700;margin-top:12px;">
+        ข้อความจากทีมปราบปรามความทุกข์
+      </h2>
+    </div>
+    <div class="reply-box" id="reply-txt"></div>
+    <button class="btn teal" onclick="markDone()">✅ อ่านจบแล้ว</button>
+  </div>
+</div>
+
+<!-- ===== DONE ===== -->
+<div class="screen" id="s-done">
+  <div class="card center">
+    <div style="font-size:70px;animation:popIn .8s ease;">☀️</div>
+    <h2 style="font-size:20px;font-weight:700;line-height:1.6;margin:16px 0 10px;">
+      ขอให้สบายใจในทุกวัน<br>
+      เราจะเป็นส่วนหนึ่งของคุณ<br>
+      ขอให้ทุกวันของคุณสดใส 🌈
+    </h2>
+    <p style="font-size:14px;color:var(--sub);margin-top:8px;">
+      โดย <strong style="color:var(--accent)">ทีมปราบปรามความทุกข์</strong>
+    </p>
+    <button class="btn" style="margin-top:26px;" onclick="go('main')">🏠 กลับหน้าหลัก</button>
+  </div>
+</div>
+
+<!-- ===== ADMIN (เข้าถึงด้วย #admin) ===== -->
+<div class="screen" id="s-admin">
+  <div class="paper" style="max-width:600px;">
+    <div class="topnav">
+      <h2 style="font-size:18px;font-weight:700;">🔑 แผงทีมปราบปรามความทุกข์</h2>
+      <span style="font-size:12px;color:var(--sub);">Admin Panel</span>
+    </div>
+    <div id="admin-list"></div>
+  </div>
+</div>
+
+<script>
+// ——— CONFIG ———
+const ADMIN_EMAIL = 'tanannutpetchanuan@gmail.com'; 
+
+// ——— STATE ———
+let user = JSON.parse(localStorage.getItem('bh_user')) || null;
+let entries = JSON.parse(localStorage.getItem('bh_entries')) || [];
+let dark = localStorage.getItem('bh_dark') === '1';
+let replyTarget = null;
+
+// ——— INIT ———
+if (dark) document.body.setAttribute('data-dark', '');
+updateThemeBtn();
+spawnParticles();
+
+if (location.hash === '#admin') {
+  showScreen('admin');
+  renderAdmin();
+} else if (user) {
+  showScreen('main');
+  renderMain();
+  checkReplies();
+} else {
+  showScreen('verify');
+}
+
+// ——— ROUTING ———
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const el = document.getElementById('s-' + id);
+  if (el) el.classList.add('active');
+}
+
+function go(id) {
+  showScreen(id);
+  if (id === 'main') renderMain();
+}
+
+// ——— VERIFY ———
+function doVerify() {
+  const nick = document.getElementById('v-nick').value.trim();
+  const age  = document.getElementById('v-age').value.trim();
+  const email= document.getElementById('v-email').value.trim();
+  if (!nick || !age || !email) { alert('กรุณากรอกข้อมูลให้ครบนะครับ 🙏'); return; }
+  if (!email.includes('@')) { alert('กรุณากรอกอีเมลให้ถูกต้องนะครับ'); return; }
+  user = { nick, age, email, id: Date.now() };
+  localStorage.setItem('bh_user', JSON.stringify(user));
+  document.getElementById('wname').textContent = nick;
+  showScreen('welcome');
+}
+
+// ——— MAIN ———
+function renderMain() {
+  if (!user) return;
+  document.getElementById('mname').textContent = user.nick;
+  const list = document.getElementById('elist');
+  list.innerHTML = '';
+
+  if (entries.length === 0) {
+    list.innerHTML = '<p style="text-align:center;color:var(--sub);font-size:14px;padding:24px 0;">ยังไม่มีบันทึก กด + NEW เพื่อเริ่มต้น 💙</p>';
+    return;
+  }
+
+  [...entries].reverse().forEach(e => {
+    const d = document.createElement('div');
+    d.className = 'entry-card';
+    const unread = e.reply && !e.read;
+    const date = new Date(e.id).toLocaleDateString('th-TH', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+    const preview = e.content.length > 35 ? e.content.slice(0,35) + '...' : e.content;
+
+    d.innerHTML = `
+      <div class="entry-info">
+        <h3>${e.nick || user.nick}</h3>
+        <p>${date} · ${preview}</p>
+      </div>
+      ${unread
+        ? '<span class="badge anim">💌 มีตอบกลับ</span>'
+        : e.reply
+          ? '<span class="badge grey">อ่านแล้ว</span>'
+          : '<span class="badge">รอตอบกลับ</span>'}
+    `;
+
+    if (unread) {
+      d.onclick = () => {
+        replyTarget = e.id;
+        document.getElementById('reply-txt').textContent = e.reply;
+        showScreen('reply');
+      };
+    }
+    list.appendChild(d);
+  });
+}
+
+// ——— NEW ENTRY ———
+function submitEntry() {
+  const nick = document.getElementById('e-nick').value.trim() || user.nick;
+  const content = document.getElementById('e-content').value.trim();
+  if (!content) { alert('ลองเขียนอะไรออกมาก่อนนะ 🤍'); return; }
+
+  const entry = { id: Date.now(), nick, content, reply: null, read: false };
+  entries.push(entry);
+  save();
+
+  // เปิด mailto ส่งหาทีม
+  const sub = encodeURIComponent(`[Big Hug] ข้อความจาก ${nick}`);
+  const body = encodeURIComponent(
+    `ชื่อเล่น: ${nick}\nอายุ: ${user.age}\nอีเมล: ${user.email}\n\n──────────\n${content}\n──────────\n\nID: ${entry.id}`
+  );
+  window.open(`mailto:${ADMIN_EMAIL}?subject=${sub}&body=${body}`);
+
+  document.getElementById('e-nick').value = '';
+  document.getElementById('e-content').value = '';
+  showScreen('sent');
+}
+
+// ——— DEMO REPLY ———
+function fakeReply() {
+  if (entries.length === 0) return;
+  const last = entries[entries.length - 1];
+  last.reply = `สวัสดีครับ ${last.nick} 🤗\n\nขอบคุณมากที่ไว้วางใจเล่าให้ฟังนะครับ\nเราอ่านทุกคำที่คุณเขียนมาด้วยหัวใจเต็มๆ 💙\n\nขอให้รู้ว่า ความรู้สึกของคุณมีคุณค่าและสำคัญมาก\nคุณไม่ได้อยู่คนเดียวในความทุกข์นี้\nเราอยู่ตรงนี้เสมอ พร้อมส่ง Big Hug ให้คุณ 🌟\n\nสู้ๆ นะครับ ขอให้วันนี้ดีขึ้นทุกวัน ✨\n\n— ทีมปราบปรามความทุกข์ Big Hug 🤗`;
+  last.read = false;
+  save();
+  go('main');
+  setTimeout(showNotif, 600);
+}
+
+// ——— CHECK REPLIES ———
+function checkReplies() {
+  if (entries.some(e => e.reply && !e.read)) showNotif();
+}
+
+function showNotif() {
+  const n = document.getElementById('notif');
+  n.classList.add('show');
+  setTimeout(() => n.classList.remove('show'), 5500);
+}
+
+function openReplyFromNotif() {
+  document.getElementById('notif').classList.remove('show');
+  const e = entries.find(e => e.reply && !e.read);
+  if (e) {
+    replyTarget = e.id;
+    document.getElementById('reply-txt').textContent = e.reply;
+    showScreen('reply');
+  }
+}
+
+// ——— MARK DONE ———
+function markDone() {
+  if (replyTarget) {
+    const e = entries.find(e => e.id === replyTarget);
+    if (e) e.read = true;
+    save();
+    replyTarget = null;
+  }
+  showScreen('done');
+}
+
+// ——— ADMIN ———
+function renderAdmin() {
+  const c = document.getElementById('admin-list');
+  c.innerHTML = '';
+  if (entries.length === 0) {
+    c.innerHTML = '<p style="text-align:center;color:var(--sub);padding:30px;">ยังไม่มีข้อความ 📭</p>';
+    return;
+  }
+  [...entries].reverse().forEach(e => {
+    const d = document.createElement('div');
+    d.style.cssText = 'background:var(--input);border-radius:13px;padding:20px;margin-bottom:16px;border:1px solid var(--border);';
+    const date = new Date(e.id).toLocaleString('th-TH');
+    d.innerHTML = `
+      <div style="font-weight:600;margin-bottom:4px;">${e.nick} <span style="font-size:12px;color:var(--sub);font-weight:400;">${date}</span></div>
+      <div style="font-size:14px;color:var(--sub);line-height:1.75;margin-bottom:14px;white-space:pre-wrap;">${e.content}</div>
+      ${e.reply
+        ? `<div style="font-size:13px;background:rgba(78,205,196,.12);padding:12px;border-radius:9px;color:var(--accent2);">✅ ตอบกลับแล้ว</div>`
+        : `<textarea class="form-input" id="ar-${e.id}" placeholder="พิมพ์คำตอบกลับ..." style="min-height:90px;margin-bottom:10px;"></textarea>
+           <button class="btn teal" style="width:auto;padding:10px 22px;" onclick="adminReply(${e.id})">📨 ส่งตอบกลับ</button>`
+      }
+    `;
+    c.appendChild(d);
+  });
+}
+
+function adminReply(id) {
+  const el = document.getElementById('ar-' + id);
+  if (!el || !el.value.trim()) return;
+  const e = entries.find(e => e.id === id);
+  if (e) { e.reply = el.value.trim(); e.read = false; save(); renderAdmin(); }
+}
+
+// ——— THEME ———
+function toggleTheme() {
+  dark = !dark;
+  dark ? document.body.setAttribute('data-dark','') : document.body.removeAttribute('data-dark');
+  localStorage.setItem('bh_dark', dark ? '1' : '0');
+  updateThemeBtn();
+}
+function updateThemeBtn() {
+  document.getElementById('th-icon').textContent = dark ? '☀️' : '🌙';
+  document.getElementById('th-txt').textContent  = dark ? 'Light' : 'Dark';
+}
+
+// ——— SAVE ———
+function save() { localStorage.setItem('bh_entries', JSON.stringify(entries)); }
+
+// ——— PARTICLES ———
+function spawnParticles() {
+  const wrap = document.getElementById('particles');
+  const emojis = ['🤍','💙','✨','🌸','💫','🌟','🍀','🌈','🕊️','💝'];
+  for (let i = 0; i < 14; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.textContent = emojis[i % emojis.length];
+    p.style.cssText = `left:${Math.random()*100}%;font-size:${14+Math.random()*18}px;animation-duration:${9+Math.random()*13}s;animation-delay:${Math.random()*12}s;`;
+    wrap.appendChild(p);
+  }
+}
+</script>
+</body>
+</html>
